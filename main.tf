@@ -3,7 +3,7 @@ module "networking" {
   project   = var.project
 } 
 
-  module "database" {
+module "database" {
   source    = "./modules/database"
   project = var.project
 
