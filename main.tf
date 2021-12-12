@@ -10,3 +10,13 @@ module "database" {
   vpc = module.networking.vpc
   sg  = module.networking.sg
 }
+
+module "app" {
+  source      = "./modules/app"
+  project   = var.project
+  ssh_keypair = var.ssh_keypair
+
+  vpc       = module.networking.vpc
+  sg        = module.networking.sg
+  db_config = module.database.db_config
+}
