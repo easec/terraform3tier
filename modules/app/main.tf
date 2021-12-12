@@ -43,3 +43,30 @@ resource "aws_autoscaling_group" "appserver" {
     version = aws_launch_template.appserver.latest_version
   }
 }
+
+module "app_alb" {
+  source = "terraform-aws-modules/alb/aws"
+  version = "~> 5.0"
+  name = "${var.project}--app-alb"
+  load_balancer_type = "application"
+  vpc_id = var.vpc.vpc_id
+  subnets = var.vpc.private_subnets
+  security_groups = [var.sg.app_alb_sg]
+
+  http_tcp_listeners = [
+    {
+      port = 80,
+      protocol = "HTTP"
+      target_group_index = 0
+    }
+  ]
+
+  target_groups = [
+    {
+      name_prefix = "appsvr",
+      backend_protocol = "HTTP",
+      backend_port = 80
+      target_type = "instance"
+    }
+  ]
+} 
