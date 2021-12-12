@@ -22,3 +22,24 @@ data "aws_ami" "ubuntu" {
   owners = [
     "099720109477" ]
 }
+
+resource "aws_launch_template" "appserver" {
+  name_prefix = var.project
+  image_id = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  user_data = data.cloudinit_config.config.rendered
+  key_name = var.ssh_keypair
+  vpc_security_group_ids = [var.sg.app_server_sg]
+}
+
+resource "aws_autoscaling_group" "appserver" {
+  name = "${var.project}-app-asg"
+  min_size = 1
+  max_size = 3
+  vpc_zone_identifier = var.vpc.private_subnets
+  target_group_arns = module.app_alb.target_group_arns
+  launch_template {
+    id = aws_launch_template.appserver.id
+    version = aws_launch_template.appserver.latest_version
+  }
+}
