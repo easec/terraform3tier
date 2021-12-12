@@ -20,3 +20,12 @@ module "app" {
   sg        = module.networking.sg
   db_config = module.database.db_config
 }
+
+module "web" {
+  source      = "./modules/web"
+  project   = var.project
+  ssh_keypair = var.ssh_keypair
+
+  vpc       = module.networking.vpc
+  sg        = module.networking.sg
+}
