@@ -6,7 +6,7 @@ variable "project" {
 
 variable "ssh_keypair" {
   description = "SSH keypair to use for EC2 instance"
-  default     = null
+  default     = "easec-keypair"
   type        = string
 }
 
